@@ -2,8 +2,9 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 require("dotenv").config();
-const db = require("./utils/dbconn");
+const connectdb = require("./utils/dbconn");
 const User = require("./Model/UserModel");
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -78,6 +79,8 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
     const user = await User.findById(_id);
 
+    console.log(user);
+
     const exercise = {
       description,
       duration: Number(duration),
@@ -96,7 +99,10 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
   }
 });
 
-const listener = app.listen(process.env.PORT || 3000, () => {
+const listener = app.listen(process.env.PORT || 3000, async () => {
+
+const db = await connectdb();
+
   db.on("error", console.error.bind(console, "connection error:"));
   db.once("open", function () {
     console.log("Connected to the database!");
