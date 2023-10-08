@@ -98,7 +98,7 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
     const exercise = {
       description,
       duration: Number(duration),
-      date: date ? new Date(date) : new Date(),
+      date: date ? new Date(date).toDateString() : new Date().toDateString(),
     };
 
     const updatedUser = await user.addExercise(exercise);
@@ -111,6 +111,25 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
       message: "Something went wrong",
     });
   }
+});
+
+app.get("/api/users/:_id/exercises", async (req, res) => {
+  const { _id } = req.params;
+
+  console.log(_id);
+
+  const user = await User.findOne({ log: { $elemMatch: { _id } } });
+
+  if (!user) {
+    return res.status(404).json({
+      error: "User not found",
+      message: "User not found",
+    });
+  }
+
+  const exercise = await user.getExercise(_id);
+
+  res.json(exercise);
 });
 
 const listener = app.listen(process.env.PORT || 3000, async () => {

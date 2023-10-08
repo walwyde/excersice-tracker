@@ -23,7 +23,19 @@ userSchema.methods.addExercise = async function (exercise) {
 };
 
 userSchema.methods.getExercise = async function (id) {
-  return this.log.find((exercise) => exercise._id === id);
+  const exercise = this.log.find((exercise) => exercise._id.toString() === id);
+
+  if (!exercise) {
+    return { username: this.username, _id: this._id, exercise: {} };
+  }
+
+  return {
+    username: this.username,
+    _id: this._id,
+    description: exercise._doc.description,
+    duration: exercise._doc.duration,
+    date: exercise._doc.date.toDateString(),
+  };
 };
 
 userSchema.methods.getExercises = async function (from, to, limit) {
