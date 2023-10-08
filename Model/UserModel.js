@@ -51,7 +51,26 @@ userSchema.methods.getExercises = async function (from, to, limit) {
     exercises = exercises.slice(0, limit);
   }
 
-  return { username: this.username, _id: this._id, exercises };
+  const updateExercises = async (exercises) => {
+    const buffer = [];
+    await exercises.map((exercise) => {
+      buffer.push({
+        description: exercise.description,
+        duration: exercise.duration,
+        date: exercise.date.toDateString(),
+      });
+    });
+
+    return buffer;
+  };
+
+  const updatedExercises = await updateExercises(exercises);
+
+  return {
+    username: this.username,
+    _id: this._id,
+    exercises: updatedExercises,
+  };
 };
 
 userSchema.methods.totalDuration = function (from, to) {

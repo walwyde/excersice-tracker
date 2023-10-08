@@ -32,7 +32,8 @@ app.get("/api/users", async (req, res) => {
 });
 
 app.get("/api/users/:_id/logs", async (req, res) => {
-  const { _id } = req.params;
+  try {
+    const { _id } = req.params;
   const { from, to, limit } = req.query;
 
   const user = await User.findById(_id);
@@ -49,9 +50,16 @@ app.get("/api/users/:_id/logs", async (req, res) => {
   res.json({
     username: userLog.username,
     _id: userLog._id,
-    count: userLog.exercises.length,
-    log: userLog.exercises,
+    count: userLog.exercises && userLog.exercises.length,
+    log: userLog.exercises ? userLog.exercises : [],
   });
+  } catch (ex) {
+    console.log(ex);
+    res.status(400).json({
+      error: ex.message,
+      message: "Something went wrong",
+    });
+  }
 });
 
 app.post("/api/users", async (req, res) => {
