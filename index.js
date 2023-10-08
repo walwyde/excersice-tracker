@@ -5,7 +5,6 @@ require("dotenv").config();
 const connectdb = require("./utils/dbconn");
 const User = require("./Model/UserModel");
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -100,12 +99,6 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 });
 
 const listener = app.listen(process.env.PORT || 3000, async () => {
-
-const db = await connectdb();
-
-  db.on("error", console.error.bind(console, "connection error:"));
-  db.once("open", function () {
-    console.log("Connected to the database!");
-  });
+  await connectdb();
   console.log("Your app is listening on port " + listener.address().port);
 });
