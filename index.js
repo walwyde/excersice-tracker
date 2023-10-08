@@ -35,22 +35,37 @@ app.get("/api/users/:_id/logs", async (req, res) => {
   const { _id } = req.params;
   const { from, to, limit } = req.query;
 
-  console.log(from, to, limit);
-
   const user = await User.findById(_id);
 
-  const exercises = await user.getExercises(from, to, limit);
+  if (!user) {
+    return res.status(404).json({
+      error: "User not found",
+      message: "User not found",
+    });
+  }
+
+  const userLog = await user.getExercises(from, to, limit);
 
   res.json({
-    username: user.username,
-    log: exercises,
-    count: exercises.length,
+    username: userLog.username,
+    _id: userLog._id,
+    count: userLog.exercises.length,
+    log: userLog.exercises,
   });
 });
 
 app.post("/api/users", async (req, res) => {
   try {
     const { username } = req.body;
+
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      return res.status(400).json({
+        username: existingUser.username,
+        _id: existingUser._id,
+      });
+    }
 
     const user = await User.create({ username });
 

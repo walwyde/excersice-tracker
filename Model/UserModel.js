@@ -39,7 +39,7 @@ userSchema.methods.getExercises = async function (from, to, limit) {
     exercises = exercises.slice(0, limit);
   }
 
-  return exercises;
+  return { username: this.username, _id: this._id, exercises };
 };
 
 userSchema.methods.totalDuration = function (from, to) {

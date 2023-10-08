@@ -14,7 +14,6 @@ const connectdb = async () => {
     connected.connection.once("open", function () {
       console.log("Connected to the database!");
     });
-
   } catch (ex) {
     console.log(ex);
   }
